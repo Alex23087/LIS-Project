@@ -1,18 +1,18 @@
 (lang dune 3.14)
 
-(name lisproject)
+(name failure_ssil_analyzer)
 
 (generate_opam_files true)
 
 (source
- (uri https://github.com/Alex23087/LIS-Project))
+ (uri https://github.com/Alex23087/Failure-SSIL-Analyser))
 
 (authors
   "Yuri Andriaccio"
-  "Alessandro Scala"
+  "Marco Antonio Corallo"
   "Andrea Simone Costa"
   "Elvis Rossi"
-  "Marco Antonio Corallo"
+  "Alessandro Scala"
   "Samuele Bonini"
   "Andrea Castagna"
   "Fabio Federico"
@@ -24,6 +24,6 @@
 (license GPL-3.0-or-later)
 
 (package
- (name lisproject)
+ (name failure_ssil_analyzer)
  (depends ocaml dune)
 )

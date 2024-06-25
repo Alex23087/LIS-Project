@@ -1,0 +1,6 @@
+n = nondet();
+while (n > 0 && (x % 2) == 0 ) {
+    x = x + n;
+    n = nondet()
+};
+skip << x >= 2147483647 >>

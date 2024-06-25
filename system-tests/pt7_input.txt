@@ -1,0 +1,12 @@
+x = [v];
+{
+    y = [v];
+    free(y);
+    y = alloc();
+    [v] = y
+}
++
+{
+    skip
+};
+skip << (x -/>) * true >>

@@ -1,22 +1,16 @@
-open Lisproject.Ast
-open Sexplib.Std
-open Ppx_compare_lib.Builtin
-
-(* Instantiate the AST with the annotation type *)
-module ASTLogic = AnnotationLogic(struct
-  type t = int (* int annotations *) [@@deriving show, sexp, compare]
-end)
-
-open ASTLogic
+open Failure_ssil_analyzer.Ast
+open AnnotationLogic
 
 let counter = ref 0
 
+type t = int AnnotationLogic.t
+[@@deriving show]
+
 (* Annotate a node with a unique integer *)
-let annotate (node: 'a): 'a AnnotatedNode.t =
+let annotate node =
   let out = AnnotatedNode.make node !counter in
   counter := !counter + 1;
   out
-
 
 let () =
   (* Create an AST corresponding to:  (((x<5) and (x+1==y%2)) or (exists p.(p<=x or p>=y*2)) * (x -> _ and y -> 12)) *)
@@ -77,6 +71,5 @@ let () =
         ))
       ))
     )) in
-
   (* Print it with show_rcmd *)
   print_endline (show root)

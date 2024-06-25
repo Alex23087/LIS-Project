@@ -1,6 +1,6 @@
 (library
- (name lisproject)
- (public_name lisproject)
+ (name failure_ssil_analyzer)
+ (public_name failure_ssil_analyzer)
  (libraries menhirLib sexplib)
  (inline_tests)
  (preprocess

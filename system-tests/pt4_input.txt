@@ -1,0 +1,6 @@
+if (x < -1) then {
+	x = -x
+} else {
+	x = x
+};
+skip << x < 0 >>

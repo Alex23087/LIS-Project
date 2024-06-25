@@ -1,0 +1,9 @@
+res = 0;
+while (b > 0) {
+    q = a / b;
+    r = a - q * b;
+    a = b;
+    res = a;
+    b = r
+};
+skip << a != 0 && b != 0 && res = 0 >>

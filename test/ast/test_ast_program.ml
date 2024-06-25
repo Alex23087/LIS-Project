@@ -1,21 +1,16 @@
-open Lisproject.Ast
-open Sexplib.Std
-open Ppx_compare_lib.Builtin
-
-(* Instantiate the AST with the annotation type *)
-module ASTHRC = HeapRegularCommands(struct
-  type t = int (* int annotations *) [@@deriving show, sexp, compare]
-end)
+open Failure_ssil_analyzer.Ast
+open HeapRegularCommands
 
 let counter = ref 0
 
+type t = int HeapRegularCommands.t
+[@@deriving show]
+
 (* Annotate a node with a unique integer *)
-let annotate (node: 'a): 'a ASTHRC.AnnotatedNode.t =
-  let out = ASTHRC.AnnotatedNode.make node !counter in
+let annotate node =
+  let out = AnnotatedNode.make node !counter in
   counter := !counter + 1;
   out
-
-open ASTHRC
 
 let () =
   (* Create an AST corresponding to the RegCmd:  x = 1; (x < 10?; x = x + 1)*; !(x < 10)?

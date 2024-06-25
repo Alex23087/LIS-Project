@@ -1,0 +1,9 @@
+x = 0;
+if y == -1 then {
+    x = 9
+} else { 
+    while true {
+        skip
+    }
+};
+skip << x = 9 >>

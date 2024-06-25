@@ -1,0 +1,1 @@
+<< exists a.(true * (v -> a) * (a -/>)) >>

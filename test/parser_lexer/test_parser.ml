@@ -1,5 +1,5 @@
-open Lisproject.Parserlexer
-open Lisproject.Prelude.Ast
+open Failure_ssil_analyzer.Parserlexer
+open Failure_ssil_analyzer.Prelude.Analysis.Parser
 
 (** handle errors by printing useful informations *)
 let handle_error source lexeme_pos msg =

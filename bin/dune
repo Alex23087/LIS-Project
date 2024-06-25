@@ -1,4 +1,4 @@
 (executable
- (public_name lisproject)
+ (public_name failure_ssil_analyzer)
  (name main)
- (libraries lisproject))
+ (libraries failure_ssil_analyzer))

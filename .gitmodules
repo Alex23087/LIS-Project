@@ -1,0 +1,3 @@
+[submodule "lib/submodules/symalg"]
+	path = lib/submodules/symalg
+	url = https://github.com/jrk/symalg.git

@@ -2,14 +2,14 @@
 
 (executable
   (name test_ast_program)
-  (libraries lisproject)
+  (libraries failure_ssil_analyzer)
   (modules test_ast_program)
   (preprocess
   (pps ppx_deriving.show ppx_deriving.ord ppx_deriving.eq ppx_sexp_conv ppx_compare)))
 
 (executable
   (name test_cfg)
-  (libraries lisproject)
+  (libraries failure_ssil_analyzer)
   (modules test_cfg)
   (preprocess
   (pps ppx_deriving.show ppx_deriving.ord ppx_deriving.eq ppx_sexp_conv ppx_compare))
@@ -17,7 +17,7 @@
 
 (executable
   (name test_logic_program)
-  (libraries lisproject)
+  (libraries failure_ssil_analyzer)
   (modules test_logic_program)
   (preprocess
   (pps ppx_deriving.show ppx_deriving.ord ppx_deriving.eq ppx_sexp_conv ppx_compare))
@@ -25,7 +25,7 @@
 
 (executable
   (name test_parser)
-  (libraries lisproject)
+  (libraries failure_ssil_analyzer)
   (modules test_parser)
   (preprocess
   (pps ppx_deriving.show ppx_deriving.ord ppx_deriving.eq ppx_sexp_conv ppx_compare))
@@ -33,7 +33,7 @@
 
 (executable
   (name test_ast_prelude)
-  (libraries lisproject)
+  (libraries failure_ssil_analyzer)
   (modules test_ast_prelude)
   (preprocess
   (pps ppx_deriving.show ppx_deriving.ord ppx_deriving.eq ppx_sexp_conv ppx_compare))

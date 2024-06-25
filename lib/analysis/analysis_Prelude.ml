@@ -1,0 +1,8 @@
+include DataStructures
+include DataStructures.Analysis
+include Normalization
+include ExpressionSubstitution
+include FormulaSimplification
+include SemanticValidation
+include Analysis_Utils
+include Analysis_CommandConversion
