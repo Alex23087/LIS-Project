@@ -1,4 +1,5 @@
 open Analysis_Prelude
+open Analysis_Utils
 open NormalForm
 
 (* expand_andSeparately take a formula and returns a list of formulas,
@@ -47,3 +48,40 @@ let are_all_identifiers_free (identifiers : IdentifierSet.t) (vars : IdentifierS
    i.e. precondition of free(x) returns False if in postcondition there is a bound x
  *)
 exception Bound_Identifier of identifier
+
+(* Given a formula q and a variable x, computes a q' such that
+   q ∧ (x -/> ∗ true) is equivalent to x -/> * q'
+   It returns q' as a list of formulas that are in disjunction
+ *)
+let rec extract_dealloc (x : identifier) (q : Formula.t) : Formula.t list =
+  match q with
+  | True -> [True]
+  | False -> [False]
+  | Comparison(_) -> [q]
+  | EmptyHeap -> [False]
+  | Allocation(_) -> [False]
+  | NonAllocated(y) -> [And(Comparison(Equals, ArithmeticExpression.Variable y, ArithmeticExpression.Variable x), EmptyHeap)]
+  | And(q1, q2) ->  list_cartesian (extract_dealloc x q1) (extract_dealloc x q2) |> List.map (fun (a, b) -> Formula.And(a, b))
+  | AndSeparately(q1, q2) ->
+    let resleft = List.map (fun a -> Formula.AndSeparately(a, q2)) (extract_dealloc x q1) in
+    let resright = List.map (fun b -> Formula.AndSeparately(q1, b)) (extract_dealloc x q2) in
+      resleft @ resright
+
+
+(* Given a formula q and two variables x and x', computes a q' such that
+   q ∧ (x -> x' ∗ true) is equivalent to x -> x' * q'
+   It returns q' as a list of formulas that are in disjunction
+ *)
+let rec extract_alloc (x : identifier) (x' : identifier) (q : Formula.t) : Formula.t list =
+  match q with
+  | True -> [True]
+  | False -> [False]
+  | Comparison(_) -> [q]
+  | EmptyHeap -> [False]
+  | Allocation(y, a) -> [And(Comparison(Equals, ArithmeticExpression.Variable y, ArithmeticExpression.Variable x), And(Comparison(Equals, a, ArithmeticExpression.Variable x'), EmptyHeap))]
+  | NonAllocated(_) -> [False]
+  | And(q1, q2) -> list_cartesian (extract_alloc x x' q1) (extract_alloc x x' q2) |> List.map (fun (a, b) -> Formula.And(a, b))
+  | AndSeparately(q1, q2) ->
+    let resleft = List.map (fun a -> Formula.AndSeparately(a, q2)) (extract_alloc x x' q1) in
+    let resright = List.map (fun b -> Formula.AndSeparately(q1, b)) (extract_alloc x x' q2) in
+      resleft @ resright

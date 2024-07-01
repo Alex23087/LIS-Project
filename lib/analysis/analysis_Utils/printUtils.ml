@@ -24,7 +24,7 @@ module Analysis = struct
       IdentifierSet.fold (fun x acc -> acc ^ "exists " ^ x ^ ".") vars ""
     in
     let bound_identifiers_better_names (formula: NormalForm.t) =
-      let new_id_name last_name =
+      let new_id_name (last_name: string): string =
         if last_name.[0] = 'z' then
           "a" ^ last_name
         else
@@ -32,32 +32,37 @@ module Analysis = struct
           let ch = last_name.[0] |> Char.code |> ((+) 1) |> Char.chr |> (String.make 1) in
           ch ^ last_part
       in
-      let new_id_name_in_vars old_id last_name (bound_vars: IdentifierSet.t) =
+      (* Free variables of the formula: these names can't be changed nor bound *)
+      let free_vars = NormalFormUtils.normal_form_free_variables formula in
+      (* Given the last name generated, an old identifier and a set of (currently) bound variables, creates a new fresh identifier.
+         Returns the new identifier and the updated set of bound variables *)
+      let rec get_fresh_variable (last_name: string) (old_id: string) (bound_vars: IdentifierSet.t): string * IdentifierSet.t =
         let new_name = new_id_name last_name in
-        if IdentifierSet.find_opt last_name bound_vars |> Option.is_none then
-          new_name, bound_vars |> IdentifierSet.remove old_id |> IdentifierSet.add last_name
-        else
+        if IdentifierSet.find_opt new_name free_vars |> Option.is_some then
+          (* The name is one of the free vars, skip *)
+          get_fresh_variable new_name old_id bound_vars
+        else if new_name = old_id then
+          (* The new name is the same as the old name: we can use it to replace itself *)
           new_name, bound_vars
+        else if IdentifierSet.find_opt last_name bound_vars |> Option.is_some then
+          (* The name is one of the currently bound variables (and not the old_id), skip *)
+          get_fresh_variable new_name old_id bound_vars
+        else
+          (* The name is fresh, returns it and the update bound variables  *)
+          new_name, bound_vars |> IdentifierSet.remove old_id |> IdentifierSet.add new_name
       in
 
+      (* For each bound name, we get a fresh replacement and perform the substitution *)
       IdentifierSet.fold (fun id (name, formula) ->
-        let free_vars = NormalFormUtils.normal_form_free_variables formula in
-        let rec gen_valid_var name free_vars =
-          if IdentifierSet.find_opt name free_vars |> Option.is_some then
-            gen_valid_var (new_id_name name) free_vars
-          else
-            name
-        in
-        let name = gen_valid_var name free_vars in
+        let new_name, new_bound_vars = get_fresh_variable name id formula.variables in
 
-        let next_name, variables = new_id_name_in_vars id name formula.variables in
         let disjoints =
-          if name <> id then
-            List.map (fun x -> RenameVariable.rename_variable_in_formula x id name) formula.disjoints
+          if new_name <> id then
+            List.map (fun q -> RenameVariable.rename_variable_in_formula q id new_name) formula.disjoints
           else
             formula.disjoints
         in
-        next_name, NormalForm.make variables disjoints formula.id_generator
+        new_name, NormalForm.make new_bound_vars disjoints formula.id_generator
       ) formula.variables ("a", formula) |> snd
     in
 

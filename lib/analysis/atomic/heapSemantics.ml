@@ -137,3 +137,32 @@ let apply_read (vars : IdentifierSet.t) (l_id : identifier) (r_id : identifier) 
       then read_heap_partition formula vars l_id r_id fresh_1 fresh_2 f true
     else read_heap_partition formula vars l_id r_id fresh_1 fresh_2 f false
   | _ -> False
+
+(* apply the semantics of alloc using the extract_alloc util *)
+let apply_alloc_v2 (x : identifier) (x': identifier) (vars : IdentifierSet.t) (disjoints : Formula.t list) =
+  disjoints
+  |> List.map (extract_alloc x x')
+  |> List.concat
+  |> List.filter (fun q' -> check_frame_rule_side_condition q' vars x)
+  |> List.map (fun q' -> Formula.AndSeparately(EmptyHeap, q'))
+
+(* apply the semantics of free using the extract_dealloc util *)
+let apply_free_v2 (x : identifier) (new_name: identifier) (disjoints : Formula.t list) =
+  disjoints
+  |> List.map (extract_dealloc x)
+  |> List.concat
+  |> List.map (fun q' -> Formula.AndSeparately(Allocation(x, ArithmeticExpression.Variable new_name), q'))
+
+(* apply the semantics of write using the extract_alloc util *)
+let apply_write_v2 (x : identifier) (new_name: identifier) (disjoints : Formula.t list) =
+  disjoints
+  |> List.map (extract_alloc x new_name)
+  |> List.concat
+  |> List.map (fun q' -> Formula.AndSeparately(Allocation(x, ArithmeticExpression.Variable new_name), q'))
+
+(* apply the semantics of read using the extract_alloc util *)
+let apply_read_v2 (l_id : identifier) (r_id : identifier) (new_name: identifier) (new_name2: identifier) (disjoints : Formula.t list) =
+  disjoints
+  |> List.map (extract_alloc r_id new_name)
+  |> List.concat
+  |> List.map (fun q' -> Formula.AndSeparately(Allocation(r_id, ArithmeticExpression.Variable new_name), substitute_expression_in_formula q' (ArithmeticExpression.Variable new_name) l_id new_name2))

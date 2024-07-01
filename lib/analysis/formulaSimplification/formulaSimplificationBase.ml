@@ -6,17 +6,17 @@ open Analysis_Utils
 let simplify_formula (formula: NormalForm.t) =
   let simplification_functs = [
     UnitAnd.f;
-    UnitOr.f;
     UnitAndSep.f;
     RemoveDuplicateTrueInAndSep.f;
     NoSharedIdentifierAndSep.f;
-    ZeroAnd.f;
+    BoundVarEqual.f;
     ExpressionSimplification.f;
     RemoveIdentityComparisons.f;
     DuplicateDisjoints.f;
     BoundVariableCleanup.f;
+    ZeroNormalForm.f;
   ] in
-  let rec simplify formula =
+  let rec simplify (formula: NormalForm.t) =
     let simplified = List.fold_left (|>) formula simplification_functs in
     match equal_formulas simplified formula with
     | true  -> simplified
